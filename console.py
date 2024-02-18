@@ -41,14 +41,16 @@ class HBNBCommand(cmd.Cmd):
         Usage: <class name>.<command>([<id> [<*args> or <**kwargs>]])
         (Brackets denote optional fields in usage example.)
         """
-        _cmd = _cls = _id = _args = ''  # initialize line elements
-
-        # scan for general formating - i.e '.', '(', ')'
+        # initialize variables as empty string
+        # will be used to store various parts of the command after parsing
+        _cmd = _cls = _id = _args = ''
+        
+        # scan for general formatting - i.e '.', '(', ')'
         if not ('.' in line and '(' in line and ')' in line):
             return line
 
         try:  # parse line left to right
-            pline = line[:]  # parsed line
+            pline = line[:]  # copy the original line(: entire string)
 
             # isolate <class name>
             _cls = pline[:pline.find('.')]
@@ -60,9 +62,11 @@ class HBNBCommand(cmd.Cmd):
 
             # if parantheses contain arguments, parse them
             pline = pline[pline.find('(') + 1:pline.find(')')]
+            # if arguments are exist between ()
             if pline:
                 # partition args: (<id>, [<delim>], [<*args>])
                 pline = pline.partition(', ')  # pline convert to tuple
+                # the tuple contains  the first comma, the comma itself, and the part after the comma.
 
                 # isolate _id, stripping quotes
                 _id = pline[0].replace('\"', '')
@@ -73,9 +77,12 @@ class HBNBCommand(cmd.Cmd):
                 pline = pline[2].strip()  # pline is now str
                 if pline:
                     # check for *args or **kwargs
-                    if pline[0] is '{' and pline[-1] is'}'\
+                    # eval(pline): evaluates the string pline as a Python expression, 
+                    # essentially converting it into a Python object.
+                    if pline[0] == '{' and pline[-1] == '}'\
                             and type(eval(pline)) is dict:
                         _args = pline
+                    # if args aren't **kwargs, they are treated as regular arguments
                     else:
                         _args = pline.replace(',', '')
                         # _args = _args.replace('\"', '')
@@ -114,15 +121,21 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Create an object of any class"""
+        ''' Usage: create <class>
+        Creates a class instance,saves it (to the JSON file)
+        and prints its id '''
+        '''Split the arguments to a list'''
         if not args:
             print("** class name missing **")
             return
         elif args not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
+        # create new instance
         new_instance = HBNBCommand.classes[args]()
+        # save new object to json file
         storage.save()
+        # print its id
         print(new_instance.id)
         storage.save()
 
@@ -132,7 +145,10 @@ class HBNBCommand(cmd.Cmd):
         print("[Usage]: create <className>\n")
 
     def do_show(self, args):
-        """ Method to show an individual object """
+        '''
+        Prints the string representation of
+    an instance based on the class name and id
+        '''
         new = args.partition(" ")
         c_name = new[0]
         c_id = new[2]
@@ -152,12 +168,14 @@ class HBNBCommand(cmd.Cmd):
         if not c_id:
             print("** instance id missing **")
             return
-
+        # create the key for the dict stored objects
         key = c_name + "." + c_id
+        # Search for the object with this key in objects dictionary
         try:
             print(storage._FileStorage__objects[key])
         except KeyError:
             print("** no instance found **")
+
 
     def help_show(self):
         """ Help information for the show command """
@@ -179,15 +197,14 @@ class HBNBCommand(cmd.Cmd):
         if c_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-
         if not c_id:
             print("** instance id missing **")
             return
-
         key = c_name + "." + c_id
-
         try:
+            # delete object from obj dictionary
             del(storage.all()[key])
+            # Save the result to json file'
             storage.save()
         except KeyError:
             print("** no instance found **")
@@ -200,7 +217,6 @@ class HBNBCommand(cmd.Cmd):
     def do_all(self, args):
         """ Shows all objects, or all objects of a class"""
         print_list = []
-
         if args:
             args = args.split(' ')[0]  # remove possible trailing args
             if args not in HBNBCommand.classes:
@@ -212,8 +228,8 @@ class HBNBCommand(cmd.Cmd):
         else:
             for k, v in storage._FileStorage__objects.items():
                 print_list.append(str(v))
-
         print(print_list)
+
 
     def help_all(self):
         """ Help information for the all command """
@@ -234,6 +250,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_update(self, args):
         """ Updates a certain object with new info """
+        # initialize variables with empty string
         c_name = c_id = att_name = att_val = kwargs = ''
 
         # isolate cls from id/args, ex: (<cls>, delim, <id/args>)
@@ -263,16 +280,16 @@ class HBNBCommand(cmd.Cmd):
             print("** no instance found **")
             return
 
-        # first determine if kwargs or args
+        # first determine if kwargs or args (third section)
         if '{' in args[2] and '}' in args[2] and type(eval(args[2])) is dict:
             kwargs = eval(args[2])
             args = []  # reformat kwargs into list, ex: [<name>, <value>, ...]
             for k, v in kwargs.items():
                 args.append(k)
                 args.append(v)
-        else:  # isolate args
+        else:  # if regular arguments : isolate args
             args = args[2]
-            if args and args[0] is '\"':  # check for quoted arg
+            if args and args[0] == '\"':  # check for quoted arg
                 second_quote = args.find('\"', 1)
                 att_name = args[1:second_quote]
                 args = args[second_quote + 1:]
@@ -280,10 +297,10 @@ class HBNBCommand(cmd.Cmd):
             args = args.partition(' ')
 
             # if att_name was not quoted arg
-            if not att_name and args[0] is not ' ':
+            if not att_name and args[0] != ' ':
                 att_name = args[0]
             # check for quoted val arg
-            if args[2] and args[2][0] is '\"':
+            if args[2] and args[2][0] == '\"':
                 att_val = args[2][1:args[2].find('\"', 1)]
 
             # if att_val was not quoted arg
