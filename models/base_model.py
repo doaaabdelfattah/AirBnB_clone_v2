@@ -62,9 +62,10 @@ class BaseModel:
         # Convert to ISO format
         dictionary['created_at'] = self.created_at.isoformat()
         dictionary['updated_at'] = self.updated_at.isoformat()
-        if dictionary['_sa_instance_state']:
-            del dictionary['_sa_instance_state']
+        dictionary.pop('_sa_instance_state', None)
         return dictionary
+
+
     
     def delete(self):
         ''' delete the current instance from the storage

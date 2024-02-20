@@ -1,14 +1,13 @@
-from sqlalchemy import create_engine, MetaData
-from sqlalchemy.orm import sessionmaker, scoped_session
 import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, scoped_session
 from models.base_model import Base
-from models.base_model import BaseModel
-from models.amenity import Amenity
-from models.city import City
-from models.place import Place
-from models.review import Review
-from models.state import State
 from models.user import User
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.review import Review
+from models.place import Place
 
 
 class DBStorage:
@@ -24,27 +23,25 @@ class DBStorage:
         # Retrieve MySQL connection details from environment variables
         MySQL_user = os.getenv('HBNB_MYSQL_USER')
         MySQL_pwd = os.getenv('HBNB_MYSQL_PWD')
-        MySQL_host = os.getenv('HBNB_MYSQL_HOST', 'localhost')
+        MySQL_host = os.getenv('HBNB_MYSQL_HOST')
         MySQL_database = os.getenv('HBNB_MYSQL_DB')
         # Create engine
         # The string form of the URL is dialect[+driver]://user:password@host/dbname[?key=value..],
         self.__engine = create_engine(
             f'mysql+mysqldb:///{MySQL_user}:{MySQL_pwd}@{MySQL_host}/{MySQL_database}', pool_pre_ping=True, echo=True)
-        # Bind the engine to a metadata instance
-        metadata = MetaData(bind=self.__engine)
         # Get the env variable
         env_var = os.getenv('HBNB_ENV')
         # Drop all tables if env_var = 'test
         if env_var == 'test':
-            Base.metadata.drop_all()
+            Base.metadata.drop_all(bind=self.__engine)
 
     def all(self, cls=None):
         '''query on the current database session '''
-        classes = [User, State, City, Amenity, Review, Place]
+        classes_ = [User, State, City, Amenity, Review, Place]
         query = []
-        dict = {}
+        obj_dict = {}
         if cls is None:
-            for _class in classes:
+            for _class in classes_:
                 query.extend(self.__session.query(_class).all())
         else:
             query = self.__session.query(cls).all()
@@ -52,7 +49,8 @@ class DBStorage:
         # query = [<User object at 0x7f7f59d31250>, <User object at 0x7f7f59d31590>]
         for obj in query:
             key = f"{obj.__class__.__name__}.{obj.id}"
-            dict[key] = obj
+            obj_dict[key] = obj
+        return obj_dict
 
     def new(self, obj):
         '''add the object to the current database session 
@@ -82,3 +80,8 @@ class DBStorage:
         Session = scoped_session(session_factory)
         # 2.The session obj is then set up using its default constructor
         self.__session = Session()
+        
+        
+    def close(self):
+        """Close the working session."""
+        self.__session.close()
