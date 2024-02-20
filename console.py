@@ -226,35 +226,35 @@ class HBNBCommand(cmd.Cmd):
         print("Destroys an individual instance of a class")
         print("[Usage]: destroy <className> <objectId>\n")
 
-    def do_all(self, arg):
+    def do_all(self, args):
         """ Shows all objects, or all objects of a class"""
-        # print_list = []
-        # if args:
-        #     args = args.split(' ')[0]  # remove possible trailing args
-        #     if args not in HBNBCommand.classes:
-        #         print("** class doesn't exist **")
-        #         return
+        print_list = []
+        if args:
+            # Extract the class name from the argument
+            args = args.split(' ')[0]  # remove possible trailing args
+            # Check if the class exists in the registered classes
+            if args not in HBNBCommand.classes:
+                print("** class doesn't exist **")
+                return
+            # Retrieve all objects of the specified class from the storage
+            all_objects = storage.all(cls=args).values()
+            # Add string representations of objects to the print_list
+            for obj in all_objects:
+                print_list.append(str(obj))
+        else:
+            # If no class argument is provided, retrieve all objects from storage
+            all_objects = storage.all().values()
+            for obj in all_objects:
+                print_list.append(str(obj))
+
         #     for k, v in storage._FileStorage__objects.items():
         #         if k.split('.')[0] == args:
         #             print_list.append(str(v))
         # else:
         #     for k, v in storage._FileStorage__objects.items():
         #         print_list.append(str(v))
-        # print(print_list)
-        args = arg.split()
-        object_list = []
-        if args:
-            if args[0] not in HBNBCommand.__classes:
-                print("** class doesn't exist **")
-                return
-            else:
-                for value in storage.all().values():
-                    if args[0] == value.__class__.__name__:
-                        object_list.append(value.__str__())
-        else:
-            for value in storage.all().values():
-                object_list.append(value.__str__())
-        print(object_list)
+        print(print_list)
+        
 
     def help_all(self):
         """ Help information for the all command """

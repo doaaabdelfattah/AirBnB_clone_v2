@@ -1,4 +1,4 @@
-import os
+from os import getenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from models.base_model import Base
@@ -20,17 +20,23 @@ class DBStorage:
     def __init__(self):
         '''instantiation
         '''
+        # self.__engine = create_engine("mysql+mysqldb://{}:{}@{}/{}".
+        #                               format(getenv("HBNB_MYSQL_USER"),
+        #                                      getenv("HBNB_MYSQL_PWD"),
+        #                                      getenv("HBNB_MYSQL_HOST"),
+        #                                      getenv("HBNB_MYSQL_DB")),
+        #                               pool_pre_ping=True)
         # Retrieve MySQL connection details from environment variables
-        MySQL_user = os.getenv('HBNB_MYSQL_USER')
-        MySQL_pwd = os.getenv('HBNB_MYSQL_PWD')
-        MySQL_host = os.getenv('HBNB_MYSQL_HOST')
-        MySQL_database = os.getenv('HBNB_MYSQL_DB')
+        MySQL_user = getenv('HBNB_MYSQL_USER')
+        MySQL_pwd = getenv('HBNB_MYSQL_PWD')
+        MySQL_host = getenv('HBNB_MYSQL_HOST')
+        MySQL_database = getenv('HBNB_MYSQL_DB')
         # Create engine
         # The string form of the URL is dialect[+driver]://user:password@host/dbname[?key=value..],
         self.__engine = create_engine(
-            f'mysql+mysqldb:///{MySQL_user}:{MySQL_pwd}@{MySQL_host}/{MySQL_database}', pool_pre_ping=True, echo=True)
+            f'mysql+mysqldb://{MySQL_user}:{MySQL_pwd}@{MySQL_host}/{MySQL_database}', pool_pre_ping=True)
         # Get the env variable
-        env_var = os.getenv('HBNB_ENV')
+        env_var = getenv('HBNB_ENV')
         # Drop all tables if env_var = 'test
         if env_var == 'test':
             Base.metadata.drop_all(bind=self.__engine)
@@ -43,8 +49,8 @@ class DBStorage:
         if cls is None:
             for _class in classes_:
                 query.extend(self.__session.query(_class).all())
-        else:
-            query = self.__session.query(cls).all()
+        else: 
+            query = self.__session.query(eval(cls))
         # the output will be like this:
         # query = [<User object at 0x7f7f59d31250>, <User object at 0x7f7f59d31590>]
         for obj in query:
