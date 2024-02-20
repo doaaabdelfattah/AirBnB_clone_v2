@@ -36,7 +36,7 @@ class DBStorage:
         env_var = os.getenv('HBNB_ENV')
         # Drop all tables if env_var = 'test
         if env_var == 'test':
-            metadata.drop_all()
+            Base.metadata.drop_all()
 
     def all(self, cls=None):
         '''query on the current database session '''
