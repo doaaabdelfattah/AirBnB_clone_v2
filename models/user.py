@@ -12,7 +12,7 @@ class User(BaseModel, Base):
     first_name = Column(String(128), nullable=True)
     last_name = Column(String(128), nullable=True)
 
-    email = ''
-    password = ''
-    first_name = ''
-    last_name = ''
+    # email = ''
+    # password = ''
+    # first_name = ''
+    # last_name = ''
