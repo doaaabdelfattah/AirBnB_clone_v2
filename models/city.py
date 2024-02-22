@@ -14,7 +14,6 @@ class City(BaseModel, Base):
     
     name = Column(String(128), nullable=False)
     state_id = Column(String(60), ForeignKey('states.id'), nullable=False)
-
     # one-to-many relationship with Place
     if getenv("HBNB_TYPE_STORAGE") == "db":
         places = relationship("Place", back_populates="city", cascade="all, delete-orphan")

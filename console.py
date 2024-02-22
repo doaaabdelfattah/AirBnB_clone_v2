@@ -120,36 +120,66 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    def do_create(self, arg):
+    def do_create(self, line):
         ''' Usage: create <class>
         Creates a class instance,saves it (to the JSON file)
         and prints its id '''
         '''Split the arguments to a list'''
-        new = arg.split(" ")
-        c_name = new[0]
-        if not c_name:
+        # new = arg.split(" ")
+        # c_name = new[0]
+        # if not c_name:
+        #     print("** class name missing **")
+        #     return
+        # elif c_name not in HBNBCommand.classes:
+        #     print("** class doesn't exist **")
+        #     return
+        # kwargs = {}
+        # for item in new[1:]:
+        #     # Split each item further if needed
+        #     key, value = item.split('=')
+        #     # Add key-value pairs to the dictionary
+        #     # Stripping quotes from the value if needed
+        #     kwargs[key] = value.strip("\"").replace("_"," ")
+        # if kwargs == {}:
+        #     new_instance = eval(c_name)()
+        # else:
+        #     # create new instance
+        #     new_instance = eval(c_name)(**kwargs)
+        #     storage.new(new_instance)
+        # # save new object to json file
+        # storage.save()
+        # # print its id
+        # print(new_instance.id)
+        try:
+            if not line:
+                raise SyntaxError()
+            my_list = line.split(" ")
+
+            kwargs = {}
+            for i in range(1, len(my_list)):
+                key, value = tuple(my_list[i].split("="))
+                if value[0] == '"':
+                    value = value.strip('"').replace("_", " ")
+                else:
+                    try:
+                        value = eval(value)
+                    except (SyntaxError, NameError):
+                        continue
+                kwargs[key] = value
+
+            if kwargs == {}:
+                obj = eval(my_list[0])()
+            else:
+                obj = eval(my_list[0])(**kwargs)
+                storage.new(obj)
+            print(obj.id)
+            obj.save()
+
+        except SyntaxError:
             print("** class name missing **")
-            return
-        elif c_name not in HBNBCommand.classes:
+        except NameError:
             print("** class doesn't exist **")
-            return
-        kwargs = {}
-        for item in new[1:]:
-            # Split each item further if needed
-            key, value = item.split('=')
-            # Add key-value pairs to the dictionary
-            # Stripping quotes from the value if needed
-            kwargs[key] = value.strip("\"").replace("_"," ")
-        if kwargs == {}:
-            new_instance = eval(c_name)()
-        else:
-            # create new instance
-            new_instance = eval(c_name)(**kwargs)
-            storage.new(new_instance)
-        # save new object to json file
-        storage.save()
-        # print its id
-        print(new_instance.id)
+
 
     def help_create(self):
         """ Help information for the create method """
