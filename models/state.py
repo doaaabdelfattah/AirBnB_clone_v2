@@ -11,12 +11,10 @@ class State(BaseModel, Base):
     """ State class """
     __tablename__ = 'states'
     name = Column(String(128), nullable=False)
+    cities = relationship("City", backref="state", cascade="all, delete-orphan")
 
-    # Relations
 
-    if getenv("HBNB_TYPE_STORAGE") == "db":
-        cities = relationship("City", backref="state", cascade="all, delete-orphan")
-    else:
+    if getenv("HBNB_TYPE_STORAGE") != "db":
         @property
         def cities(self):
             """ Getter """
@@ -24,8 +22,3 @@ class State(BaseModel, Base):
             storage = FileStorage()
             cities_dict = storage.all(City)
             return [city for city in cities_dict.values() if city.state_id == self.id]
-
-        @cities.setter
-        def cities(self, value):
-            """ Setter """
-            pass

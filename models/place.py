@@ -32,13 +32,13 @@ class Place(BaseModel, Base):
 
     # Relationships
 
-    city = relationship("City", back_populates="places")
-    user = relationship("User", back_populates="places")
+    # city = relationship("City", back_populates="places")
+    # user = relationship("User", back_populates="places")
     
     
     if getenv("HBNB_TYPE_STORAGE") == "db":
-        reviews = relationship("Review", back_populates="place", cascade="all, delete-orphan")
-        amenities = relationship("Amenity",secondary='place_amenity', viewonly=False)
+        reviews = relationship("Review", backref="place", cascade="all, delete-orphan")
+        amenities = relationship("Amenity", secondary='place_amenity', viewonly=False)
 
     else:
         @property
