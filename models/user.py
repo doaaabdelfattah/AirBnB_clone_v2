@@ -20,7 +20,3 @@ class User(BaseModel, Base):
     # One-to-many relationship with Review
     reviews = relationship("Review", back_populates="user", cascade="all, delete-orphan")
 
-    # email = ''
-    # password = ''
-    # first_name = ''
-    # last_name = ''
