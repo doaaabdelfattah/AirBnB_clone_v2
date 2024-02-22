@@ -15,21 +15,21 @@ class City(BaseModel, Base):
     name = Column(String(128), nullable=False)
     state_id = Column(String(60), ForeignKey('states.id'), nullable=False)
     # one-to-many relationship with Place
-    if getenv("HBNB_TYPE_STORAGE") == "db":
-        places = relationship("Place", back_populates="city", cascade="all, delete-orphan")
+    # if getenv("HBNB_TYPE_STORAGE") == "db":
+    places = relationship("Place", back_populates="city", cascade="all, delete-orphan")
 
-    else:
-        @property
-        def places(self):
-            """ Getter """
-            from models.engine.file_storage import FileStorage
-            storage = FileStorage()
-            places_dict = storage.all(Place)
-            return [place for place in places_dict.values() if place.city_id == self.id]
+    # else:
+    #     @property
+    #     def places(self):
+    #         """ Getter """
+    #         from models.engine.file_storage import FileStorage
+    #         storage = FileStorage()
+    #         places_dict = storage.all(Place)
+    #         return [place for place in places_dict.values() if place.city_id == self.id]
 
 
-        @places.setter
-        def places(self, value):
-            """ setter """
-            pass
+    #     @places.setter
+    #     def places(self, value):
+    #         """ setter """
+    #         pass
 
