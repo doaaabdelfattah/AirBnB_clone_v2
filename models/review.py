@@ -3,6 +3,7 @@
 from models.base_model import BaseModel
 from sqlalchemy import Column, String, ForeignKey
 from models.base_model import Base
+from sqlalchemy.orm import relationship
 
 class Review(BaseModel, Base):
     """ Review classto store review information """
