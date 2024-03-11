@@ -8,12 +8,11 @@ apt-get install -y nginx
 # Create directorirs & files
 mkdir -p /data/web_static/releases/test/
 mkdir -p /data/web_static/shared/
-touch /data/web_static/releases/test/index.html
 
 echo "Holberton School" > /data/web_static/releases/test/index.html
 
 # Create the symbolic link
-ln -s /data/web_static/releases/test/ /data/web_static/current
+ln -sf /data/web_static/releases/test/ /data/web_static/current
 
 # Change Permissions
 chown -R ubuntu /data/
