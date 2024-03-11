@@ -27,8 +27,8 @@ printf %s "server {
     index  index.html index.htm;
 
     location /hbnb_static {
-        alias /data/web_static/current;
-        index index.html index.htm;
+      alias /data/web_static/current;
+      index index.html index.htm;
 
     }
     error_page 404 /404.html;
@@ -36,9 +36,7 @@ printf %s "server {
       root /var/www/html;
       internal;
     }
-}
-
-" > /etc/nginx/sites-available/default
+}" > /etc/nginx/sites-available/default
 
 
 # Restart server
