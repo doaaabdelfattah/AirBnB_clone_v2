@@ -40,26 +40,45 @@ class DBStorage:
         # Drop all tables if env_var = 'test
         if env_var == 'test':
             Base.metadata.drop_all(bind=self.__engine)
-
     def all(self, cls=None):
-        '''query on the current database session '''
-        classes_ = [User, State, City, Amenity, Review, Place]
-        query = []
-        obj_dict = {}
-        if cls is None:
-            for _class in classes_:
-                query.extend(self.__session.query(_class).all())
-        else: 
-        # Find the class object corresponding to the given class name
-            query_class = next((c for c in classes_ if c.__name__ == cls), None)
-            if query_class:
-                query = self.__session.query(query_class).all()
-            # Convert query results into a dictionary
-        for obj in query:
-            key = f"{obj.__class__.__name__}.{obj.id}"
-            obj_dict[key] = obj
+            """Query on the curret database session all objects of the given class.
 
-        return obj_dict
+            If cls is None, queries all types of objects.
+
+            Return:
+                Dict of queried classes in the format <class name>.<obj id> = obj.
+            """
+            if cls is None:
+                objs = self.__session.query(State).all()
+                objs.extend(self.__session.query(City).all())
+                objs.extend(self.__session.query(User).all())
+                objs.extend(self.__session.query(Place).all())
+                objs.extend(self.__session.query(Review).all())
+                objs.extend(self.__session.query(Amenity).all())
+            else:
+                if type(cls) == str:
+                    cls = eval(cls)
+                objs = self.__session.query(cls)
+            return {"{}.{}".format(type(o).__name__, o.id): o for o in objs}
+    # def all(self, cls=None):
+    #     '''query on the current database session '''
+    #     classes_ = [User, State, City, Amenity, Review, Place]
+    #     query = []
+    #     obj_dict = {}
+    #     if cls is None:
+    #         for _class in classes_:
+    #             query.extend(self.__session.query(_class).all())
+    #     else: 
+    #     # Find the class object corresponding to the given class name
+    #         query_class = next((c for c in classes_ if c.__name__ == cls), None)
+    #         if query_class:
+    #             query = self.__session.query(query_class).all()
+    #         # Convert query results into a dictionary
+    #     for obj in query:
+    #         key = f"{obj.__class__.__name__}.{obj.id}"
+    #         obj_dict[key] = obj
+
+    #     return obj_dict
             
         #     query = self.__session.query(eval(cls))
         # # the output will be like this:
