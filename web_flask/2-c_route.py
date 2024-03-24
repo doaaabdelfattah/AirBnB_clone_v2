@@ -21,7 +21,7 @@ def hbnb():
 @web_app.route("/c/<text>", strict_slashes=False)
 def c_fun(text):
     ''' return text '''
-    return "C is %s" % '_'.join(text.split('_'))
+    return "C %s" % '_'.join(text.split('_'))
 
 
 if __name__ == "__main__":
