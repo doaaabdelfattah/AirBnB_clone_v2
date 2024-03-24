@@ -12,6 +12,7 @@ def homepage():
     ''' return home message'''
     return "Hello HBNB!"
 
+
 @web_app.route("/hbnb", strict_slashes=False)
 def hbnb():
     ''' return home message'''
