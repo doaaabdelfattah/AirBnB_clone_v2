@@ -26,6 +26,7 @@ def c_fun(text):
     return "C {}".format(text)
 
 
+@web_app.route("/python", strict_slashes=False)
 @web_app.route("/python/<text>", strict_slashes=False)
 def python_text(text='is cool'):
     ''' return text '''
