@@ -7,6 +7,7 @@ from sqlalchemy.orm import relationship
 from models.review import Review
 from os import getenv
 from models.amenity import Amenity
+from models.engine.file_storage import FileStorage
 
 # Define Table
 place_amenity = Table('place_amenity', Base.metadata,
@@ -29,22 +30,18 @@ class Place(BaseModel, Base):
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
     amenity_ids = []
-
+    reviews = relationship("Review", backref="place", cascade="delete")
+    amenities = relationship("Amenity", secondary='place_amenity', viewonly=False,overlaps="place_amenities")
     # Relationships
 
     # city = relationship("City", back_populates="places")
     # user = relationship("User", back_populates="places")
     
     
-    if getenv("HBNB_TYPE_STORAGE") == "db":
-        reviews = relationship("Review", backref="place", cascade="all, delete-orphan")
-        amenities = relationship("Amenity", secondary='place_amenity', viewonly=False)
-
-    else:
+    if getenv("HBNB_TYPE_STORAGE", None) != "db":
         @property
         def reviews(self):
             """ Getter """
-            from models.engine.file_storage import FileStorage
             storage = FileStorage()
             reviews_list = []
             for review in storage.all("Review").values():
@@ -54,10 +51,13 @@ class Place(BaseModel, Base):
         
         @property
         def amenities(self):
-            """ Getter """
-            from models.engine.file_storage import FileStorage
+            """ Get/set Amenities """
+            amenity_list=[]
             amenity_dict = models.storage.all(Amenity)
-            return [amenity for amenity in amenity_dict.values() if amenity.id in self.amenity_ids]
+            for amenity in list(amenity_dict.values()):
+                if amenity.id in self.amenity_ids:
+                    amenity_list.append(amenity)
+            return amenity_list
         
         @amenities.setter
         def amenities(self, value):
