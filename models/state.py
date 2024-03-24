@@ -6,19 +6,21 @@ from models.base_model import Base
 from sqlalchemy.orm import relationship
 from models.city import City
 from os import getenv
+from models.engine.file_storage import FileStorage
 
 class State(BaseModel, Base):
     """ State class """
     __tablename__ = 'states'
     name = Column(String(128), nullable=False)
+    
+    # Define relationship with City
     cities = relationship("City", backref="state", cascade="all, delete-orphan")
 
-
+    # Define the getter method for cities
     if getenv("HBNB_TYPE_STORAGE") != "db":
         @property
         def cities(self):
             """ Getter """
-            from models.engine.file_storage import FileStorage
             storage = FileStorage()
             cities_dict = storage.all(City)
             return [city for city in cities_dict.values() if city.state_id == self.id]
