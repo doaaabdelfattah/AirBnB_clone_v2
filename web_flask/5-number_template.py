@@ -38,14 +38,15 @@ def python_text(text='is cool'):
 def number(n):
     ''' return number '''
     if isinstance(n, int):
-        return"{} is a number".format(n)
+        return "{} is a number".format(n)
 
 
 @web_app.route("/number_template/<n>", strict_slashes=False)
 def number_template(n):
     ''' return html page '''
 
-    return render_template("5-number_template.py", header_body="Number is {}".format(n))
+    return render_template("5-number_template.py", n=n)
+
 
 if __name__ == "__main__":
     web_app.run(debug=True, host="0.0.0.0")
