@@ -50,13 +50,26 @@ class DBStorage:
             for _class in classes_:
                 query.extend(self.__session.query(_class).all())
         else: 
-            query = self.__session.query(eval(cls))
-        # the output will be like this:
-        # query = [<User object at 0x7f7f59d31250>, <User object at 0x7f7f59d31590>]
+        # Find the class object corresponding to the given class name
+            query_class = next((c for c in classes_ if c.__name__ == cls), None)
+            if query_class:
+                query = self.__session.query(query_class).all()
+            # Convert query results into a dictionary
         for obj in query:
             key = f"{obj.__class__.__name__}.{obj.id}"
             obj_dict[key] = obj
+
         return obj_dict
+            
+        #     query = self.__session.query(eval(cls))
+        # # the output will be like this:
+        # # query = [<User object at 0x7f7f59d31250>, <User object at 0x7f7f59d31590>]
+        # for obj in query:
+        #     key = f"{obj.__class__.__name__}.{obj.id}"
+        #     obj_dict[key] = obj
+        # return obj_dict
+    
+
 
     def new(self, obj):
         '''add the object to the current database session 
