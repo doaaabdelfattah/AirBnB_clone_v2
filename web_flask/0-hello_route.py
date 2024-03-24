@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 '''
 Flask Module
 '''
@@ -14,4 +15,4 @@ def homepage():
 
 
 if __name__ == "__main__":
-    web_app.run(debug=True)
+    web_app.run(debug=True, host="0.0.0.0")
