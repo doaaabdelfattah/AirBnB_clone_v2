@@ -18,10 +18,12 @@ def hbnb():
     ''' return home message'''
     return "HBNB"
 
+
 @web_app.route("/c/<text>", strict_slashes=False)
 def c_fun(text):
     ''' return text '''
-    return "C %s" % '_'.join(text.split('_'))
+    text = text.replace("_", " ")
+    return "C {}".format(text)
 
 
 if __name__ == "__main__":
