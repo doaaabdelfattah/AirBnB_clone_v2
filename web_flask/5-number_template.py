@@ -41,10 +41,9 @@ def number(n):
         return "{} is a number".format(n)
 
 
-@web_app.route("/number_template/<n>", strict_slashes=False)
+@web_app.route("/number_template/<int:n>", strict_slashes=False)
 def number_template(n):
     ''' return html page '''
-
     return render_template("5-number.html", n=n)
 
 
