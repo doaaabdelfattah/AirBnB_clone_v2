@@ -40,8 +40,6 @@ def number(n):
     # Check if s is an integer
     if isinstance(n, int):
         return"{} is a number".format(n)
-    else:
-        abort(404)
 
 
 if __name__ == "__main__":
