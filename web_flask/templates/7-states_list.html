@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>HBNB</title>
+</head>
+<body>
+    <H1>States</H1>
+    <ul>
+    {% for item in states.values()|sort(attribute='name') %}
+        <LI>{{ item.id }}: <B>{{ item.name }}</B></LI>
+    {% endfor %}
+    </ul>
+</body>
+</html>
