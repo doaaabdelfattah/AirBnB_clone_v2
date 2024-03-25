@@ -32,11 +32,7 @@ class Place(BaseModel, Base):
     amenity_ids = []
     reviews = relationship("Review", backref="place", cascade="delete")
     amenities = relationship("Amenity", secondary='place_amenity', viewonly=False,overlaps="place_amenities")
-    # Relationships
 
-    # city = relationship("City", back_populates="places")
-    # user = relationship("User", back_populates="places")
-    
     
     if getenv("HBNB_TYPE_STORAGE", None) != "db":
         @property

@@ -15,7 +15,7 @@ class State(BaseModel, Base):
     name = Column(String(128), nullable=False)
     
     # Define relationship with City
-    cities = relationship("City", backref="state", cascade="all, delete-orphan")
+    cities = relationship("City", backref="state", cascade="delete")
 
     # Define the getter method for cities
     if getenv("HBNB_TYPE_STORAGE") != "db":
