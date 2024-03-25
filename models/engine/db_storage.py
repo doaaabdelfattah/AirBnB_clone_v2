@@ -20,13 +20,6 @@ class DBStorage:
     def __init__(self):
         '''instantiation
         '''
-        # self.__engine = create_engine("mysql+mysqldb://{}:{}@{}/{}".
-        #                               format(getenv("HBNB_MYSQL_USER"),
-        #                                      getenv("HBNB_MYSQL_PWD"),
-        #                                      getenv("HBNB_MYSQL_HOST"),
-        #                                      getenv("HBNB_MYSQL_DB")),
-        #                               pool_pre_ping=True)
-        # Retrieve MySQL connection details from environment variables
         MySQL_user = getenv('HBNB_MYSQL_USER')
         MySQL_pwd = getenv('HBNB_MYSQL_PWD')
         MySQL_host = getenv('HBNB_MYSQL_HOST')
@@ -60,34 +53,6 @@ class DBStorage:
                     cls = eval(cls)
                 objs = self.__session.query(cls)
             return {"{}.{}".format(type(o).__name__, o.id): o for o in objs}
-    # def all(self, cls=None):
-    #     '''query on the current database session '''
-    #     classes_ = [User, State, City, Amenity, Review, Place]
-    #     query = []
-    #     obj_dict = {}
-    #     if cls is None:
-    #         for _class in classes_:
-    #             query.extend(self.__session.query(_class).all())
-    #     else: 
-    #     # Find the class object corresponding to the given class name
-    #         query_class = next((c for c in classes_ if c.__name__ == cls), None)
-    #         if query_class:
-    #             query = self.__session.query(query_class).all()
-    #         # Convert query results into a dictionary
-    #     for obj in query:
-    #         key = f"{obj.__class__.__name__}.{obj.id}"
-    #         obj_dict[key] = obj
-
-    #     return obj_dict
-            
-        #     query = self.__session.query(eval(cls))
-        # # the output will be like this:
-        # # query = [<User object at 0x7f7f59d31250>, <User object at 0x7f7f59d31590>]
-        # for obj in query:
-        #     key = f"{obj.__class__.__name__}.{obj.id}"
-        #     obj_dict[key] = obj
-        # return obj_dict
-    
 
 
     def new(self, obj):
@@ -95,7 +60,6 @@ class DBStorage:
         '''
         self.__session.add(obj)
 
-    
     def save(self):
         ''' commit all changes of the current database session'''
         self.__session.commit()
